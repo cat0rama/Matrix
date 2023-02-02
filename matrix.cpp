@@ -1,5 +1,6 @@
 #include "matrix.hpp"
 
+#include <type_traits>
 #include <iostream>
 #include <math.h>
 
@@ -20,7 +21,7 @@ namespace s21 {
     }
 
     S21Matrix::S21Matrix(S21Matrix&& t_matrix) noexcept {
-        Initialize(std::move(t_matrix));
+        Initialize(std::forward<S21Matrix>(t_matrix));
     }
 
      S21Matrix::~S21Matrix() {
@@ -48,7 +49,7 @@ namespace s21 {
                  std::copy_n(t_matrix.m_matrix, Size(), m_matrix);
              } else {
                  delete[] m_matrix;
-                 Initialize(std::move(t_matrix));
+                 Initialize(std::forward<S21Matrix>(t_matrix));
              }
          }
 
@@ -181,7 +182,7 @@ namespace s21 {
 
     template<typename T>
     constexpr void S21Matrix::Initialize(T&& t_matrix) {
-        if constexpr (std::is_rvalue_reference_v<T>) {
+        if constexpr (std::is_rvalue_reference_v<decltype(t_matrix)>) {
             m_rows = std::exchange(t_matrix.m_rows, 0);
             m_cols = std::exchange(t_matrix.m_cols, 0);
             m_matrix = std::exchange(t_matrix.m_matrix, nullptr);
@@ -194,7 +195,7 @@ namespace s21 {
     }
 
     template <class Matrix, class Func>
-    void S21Matrix::Cycle(std::int32_t& t_i, std::int32_t& t_j, Matrix&& t_matrix, Func func) {
+    constexpr void S21Matrix::Cycle(std::int32_t& t_i, std::int32_t& t_j, Matrix&& t_matrix, Func func) {
         for (t_i = 0; t_i < t_matrix.m_rows; t_i++) {
             for (t_j = 0; t_j < t_matrix.m_cols; t_j++) {
                 func();

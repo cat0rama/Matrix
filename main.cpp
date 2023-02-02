@@ -22,13 +22,15 @@ int main() {
         }
     }
 
-    S21Matrix b(c);
+    S21Matrix b;
 
-    b = c = S21Matrix(10, 10) = c * 2.23 = (a += b);
+    b = S21Matrix(5, 5);
+
+    b = c;
+
+    //b = c = S21Matrix(10, 10) = c * 2.23 = (a += b);
 
     a = c = S21Matrix(8, 8);
-
-    std::cout << (a == c) << std::endl;
 
     std::cout << b << std::endl;
 

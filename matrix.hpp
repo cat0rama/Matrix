@@ -64,7 +64,7 @@ namespace s21 {
         constexpr void Initialize(T&& t_matrix);
 
         template <class Matrix, class Func>
-        static void Cycle(std::int32_t& t_i, std::int32_t& t_j, Matrix&& t_matrix, Func func);
+        constexpr static void Cycle(std::int32_t& t_i, std::int32_t& t_j, Matrix&& t_matrix, Func func);
     private:
         std::int32_t m_i = 0, m_j = 0;
         std::int32_t m_rows, m_cols;
