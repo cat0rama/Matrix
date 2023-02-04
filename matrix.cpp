@@ -3,8 +3,6 @@
 #include <iostream>
 #include <math.h>
 
-// my github -> https://github.com/Retr0Wawe
-
 namespace s21 {
     S21Matrix::S21Matrix(): m_rows(default_rows), m_cols(default_cols) {
         m_matrix = new double[m_rows * m_cols]();
