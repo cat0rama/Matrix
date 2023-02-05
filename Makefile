@@ -2,15 +2,17 @@
 
 CC=g++
 CFLAGS=-Wall -Wextra -Werror
+SRC_PATH=src
 
 all: clean s21_matrix_oop.a
 
 s21_matrix_oop.a:
-	$(CC) $(CFLAGS) -c *.cpp
+	$(CC) $(CFLAGS) -c ${SRC_PATH}/*.cpp
 	ar rc s21_matrix_oop.a *.o
 	ranlib s21_matrix_oop.a
-tests: clean
-	$(CC) $(CFLAGS) matrix.cpp tests/tests.cpp -lgtest
+
+test: clean
+	$(CC) $(CFLAGS) ${SRC_PATH}/*.cpp tests/tests.cpp -lgtest
 	./a.out
 
 clean:

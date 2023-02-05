@@ -1,102 +1,108 @@
 #ifndef MATRIX_HPP
 #define MATRIX_HPP
 
-#include <type_traits>
 #include <algorithm>
 #include <exception>
 #include <ostream>
+#include <type_traits>
 
 namespace s21 {
-    constexpr std::int32_t default_rows = 3;
-    constexpr std::int32_t default_cols = 3;
-    constexpr double EPS = 1e-6;
+constexpr std::int32_t default_rows = 3;
+constexpr std::int32_t default_cols = 3;
+constexpr double EPS = 1e-6;
 
-    class S21Matrix final {
-    public:
-        S21Matrix();
+class S21Matrix final {
+  public:
+    S21Matrix();
 
-        S21Matrix(std::int32_t t_rows, std::int32_t t_cols);
+    S21Matrix(std::int32_t t_rows, std::int32_t t_cols);
 
-        S21Matrix(const S21Matrix& t_matrix);
+    S21Matrix(const S21Matrix& t_matrix);
 
-        S21Matrix(S21Matrix&& t_matrix) noexcept;
+    S21Matrix(S21Matrix&& t_matrix) noexcept;
 
-        ~S21Matrix();
-    public:
-        S21Matrix& operator=(const S21Matrix& t_matrix);
+    ~S21Matrix();
 
-        S21Matrix& operator=(S21Matrix&& t_matrix) noexcept;
+  public:
+    S21Matrix& operator=(const S21Matrix& t_matrix);
 
-        friend std::ostream& operator<<(std::ostream& t_out, const S21Matrix& t_mat) noexcept;
+    S21Matrix& operator=(S21Matrix&& t_matrix) noexcept;
 
-        friend S21Matrix operator+(const S21Matrix& t_a, const S21Matrix& t_b);
+    friend std::ostream& operator<<(std::ostream& t_out, const S21Matrix& t_mat) noexcept;
 
-        friend S21Matrix operator-(const S21Matrix& t_a, const S21Matrix& t_b);
+    friend S21Matrix operator+(const S21Matrix& t_a, const S21Matrix& t_b);
 
-        friend S21Matrix operator*(const S21Matrix& t_a, const S21Matrix& t_b);
+    friend S21Matrix operator-(const S21Matrix& t_a, const S21Matrix& t_b);
 
-        friend bool operator==(const S21Matrix& t_a, const S21Matrix& t_b);
+    friend S21Matrix operator*(const S21Matrix& t_a, const S21Matrix& t_b);
 
-        S21Matrix operator*(const double t_num);
+    friend bool operator==(const S21Matrix& t_a, const S21Matrix& t_b);
 
-        S21Matrix& operator*=(const double t_num);
+    S21Matrix operator*(const double t_num);
 
-        S21Matrix& operator+=(const S21Matrix& t_matrix);
+    S21Matrix& operator*=(const double t_num);
 
-        S21Matrix& operator-=(const S21Matrix& t_matrix);
-    
-        S21Matrix& operator*=(const S21Matrix& t_matrix);
+    S21Matrix& operator+=(const S21Matrix& t_matrix);
 
-        double operator()(std::int32_t t_i, std::int32_t t_j) const;
+    S21Matrix& operator-=(const S21Matrix& t_matrix);
 
-        double& operator()(std::int32_t t_i, std::int32_t t_j);
-    public:
-        bool EqMatrix(const S21Matrix& t_matrix) const;
+    S21Matrix& operator*=(const S21Matrix& t_matrix);
 
-        void SumMatrix(const S21Matrix& t_matrix);
+    double operator()(std::int32_t t_i, std::int32_t t_j) const;
 
-        void SubMatrix(const S21Matrix& t_matrix);
+    double& operator()(std::int32_t t_i, std::int32_t t_j);
 
-        void MulMatrix(const S21Matrix& t_matrix);
+  public:
+    bool EqMatrix(const S21Matrix& t_matrix) const;
 
-        void MulNumber(const double t_num);
+    void SumMatrix(const S21Matrix& t_matrix);
 
-        void SetRows(const std::int32_t t_rows);
+    void SubMatrix(const S21Matrix& t_matrix);
 
-        void SetCols(const std::int32_t t_cols);
+    void MulMatrix(const S21Matrix& t_matrix);
 
-        std::int32_t GetRows() const noexcept;
+    void MulNumber(const double t_num);
 
-        std::int32_t GetCols() const noexcept;
+    void SetRows(const std::int32_t t_rows);
 
-        S21Matrix CalcComplements();
+    void SetCols(const std::int32_t t_cols);
 
-        S21Matrix InverseMatrix();
+    std::int32_t GetRows() const noexcept;
 
-        S21Matrix Transpose();
+    std::int32_t GetCols() const noexcept;
 
-        double Determinant();
+    S21Matrix CalcComplements();
 
-        std::int32_t Size() const noexcept;
+    S21Matrix InverseMatrix();
 
-        bool IsEmpty() const noexcept;
-    private:
-        void Cofactor(const S21Matrix& t_src, S21Matrix& t_dst, std::int32_t t_jmp_r, std::int32_t t_jmp_c, std::int32_t t_size);
+    S21Matrix Transpose();
 
-        double DeterminantHelper(const S21Matrix& t_matrix, std::int32_t t_size);
+    double Determinant();
 
-        S21Matrix CalcHelper(const S21Matrix& t_matrix);
+    std::int32_t Size() const noexcept;
 
-        template<typename T>
-        constexpr void Initialize(T&& t_matrix) noexcept(std::is_rvalue_reference_v<decltype(t_matrix)>);
+    bool IsEmpty() const noexcept;
 
-        template <class T, class Fn>
-        constexpr static void Cycle(std::int32_t& t_i, std::int32_t& t_j, T&& t_matrix, Fn func);
-    private:
-        std::int32_t m_i = 0, m_j = 0;
-        std::int32_t m_rows, m_cols;
-        double* m_matrix;
-    };
-}
+  private:
+    void Cofactor(const S21Matrix& t_src, S21Matrix& t_dst, std::int32_t t_jmp_r,
+                  std::int32_t t_jmp_c, std::int32_t t_size);
+
+    double DeterminantHelper(const S21Matrix& t_matrix, std::int32_t t_size);
+
+    S21Matrix CalcHelper(const S21Matrix& t_matrix);
+
+    template <typename T>
+    constexpr void
+    Initialize(T&& t_matrix) noexcept(std::is_rvalue_reference_v<decltype(t_matrix)>);
+
+    template <class T, class Fn>
+    constexpr static void Cycle(std::int32_t& t_i, std::int32_t& t_j, T&& t_matrix, Fn func);
+
+  private:
+    std::int32_t m_i = 0, m_j = 0;
+    std::int32_t m_rows, m_cols;
+    double* m_matrix;
+};
+} // namespace s21
 
 #endif
