@@ -1,7 +1,7 @@
 .PHONY: all clean
 
 CC=g++
-CFLAGS=-Wall -Wextra -Werror
+CFLAGS=-Wall -Wextra -Werror -std=c++17
 SRC_PATH=src
 
 all: clean s21_matrix_oop.a

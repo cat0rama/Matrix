@@ -1,7 +1,8 @@
 #include "../include/matrix.hpp"
 
 #include <iostream>
-#include <math.h>
+#include <cmath>
+#include <type_traits>
 
 namespace s21 {
 S21Matrix::S21Matrix() : m_rows(default_rows), m_cols(default_cols) {
@@ -17,12 +18,10 @@ S21Matrix::S21Matrix(std::int32_t t_rows, std::int32_t t_cols) : m_rows(t_rows),
 
 S21Matrix::S21Matrix(const S21Matrix& t_matrix) { Initialize(t_matrix); }
 
-S21Matrix::S21Matrix(S21Matrix&& t_matrix) noexcept { Initialize<S21Matrix>(std::move(t_matrix)); }
+S21Matrix::S21Matrix(S21Matrix&& t_matrix) noexcept { Initialize(std::move(t_matrix)); }
 
 S21Matrix::~S21Matrix() {
-    if (m_matrix) {
-        delete[] m_matrix;
-    }
+    delete[] m_matrix;
 }
 
 S21Matrix& S21Matrix::operator=(const S21Matrix& t_matrix) {
@@ -43,7 +42,7 @@ S21Matrix& S21Matrix::operator=(S21Matrix&& t_matrix) noexcept {
             std::copy_n(t_matrix.m_matrix, Size(), m_matrix);
         } else {
             delete[] m_matrix;
-            Initialize<S21Matrix>(std::move(t_matrix));
+            Initialize(std::move(t_matrix));
         }
     }
     return *this;
@@ -104,23 +103,26 @@ bool operator==(const S21Matrix& t_a, const S21Matrix& t_b) {
 
     return std::equal(
         t_a.m_matrix, t_a.m_matrix + t_a.Size(), t_b.m_matrix,
-        [](const double a, const double b) { return std::fabs(a - b) >= EPS ? false : true; });
+        [](double a, double b) { return std::fabs(a - b) >= EPS ? false : true; });
 }
 
-S21Matrix S21Matrix::operator*(const double t_num) {
+S21Matrix S21Matrix::operator*(double t_num) {
     S21Matrix tmp(m_rows, m_cols);
     std::transform(m_matrix, m_matrix + Size(), tmp.m_matrix,
                    std::bind1st(std::multiplies<double>(), t_num));
     return tmp;
 }
 
-S21Matrix& S21Matrix::operator*=(const double t_num) {
+S21Matrix& S21Matrix::operator*=(double t_num) {
     std::transform(m_matrix, m_matrix + Size(), m_matrix,
                    std::bind1st(std::multiplies<double>(), t_num));
     return *this;
 }
 
-S21Matrix& S21Matrix::operator+=(const S21Matrix& t_matrix) { return (*this = *this + t_matrix); }
+S21Matrix& S21Matrix::operator+=(const S21Matrix& t_matrix) { 
+    // оператор += должен работать по другому
+    return (*this = *this + t_matrix); 
+}
 
 S21Matrix& S21Matrix::operator-=(const S21Matrix& t_matrix) { return (*this = *this - t_matrix); }
 
@@ -140,7 +142,10 @@ double& S21Matrix::operator()(std::int32_t t_i, std::int32_t t_j) {
     return m_matrix[t_i * m_cols + t_j];
 }
 
-bool S21Matrix::EqMatrix(const S21Matrix& t_matrix) const { return *this == t_matrix; }
+bool S21Matrix::EqMatrix(const S21Matrix& t_matrix) const { 
+    // должно быть наоборот
+     return *this == t_matrix; 
+}
 
 void S21Matrix::SumMatrix(const S21Matrix& t_matrix) { *this += t_matrix; }
 
@@ -148,10 +153,10 @@ void S21Matrix::SubMatrix(const S21Matrix& t_matrix) { *this -= t_matrix; }
 
 void S21Matrix::MulMatrix(const S21Matrix& t_matrix) { *this = *this * t_matrix; }
 
-void S21Matrix::MulNumber(const double t_num) { *this *= t_num; }
+void S21Matrix::MulNumber(double t_num) { *this *= t_num; }
 
 // thanks @iopmanu for good idea
-void S21Matrix::SetRows(const std::int32_t t_rows) {
+void S21Matrix::SetRows(std::int32_t t_rows) {
     if (t_rows < 1) {
         throw std::invalid_argument("incorrect row size\n");
     }
@@ -167,7 +172,7 @@ void S21Matrix::SetRows(const std::int32_t t_rows) {
     m_rows = t_rows;
 }
 
-void S21Matrix::SetCols(const std::int32_t t_cols) {
+void S21Matrix::SetCols(std::int32_t t_cols) {
     if (t_cols < 1) {
         throw std::invalid_argument("incorrect row size\n");
     }
@@ -266,7 +271,6 @@ S21Matrix S21Matrix::CalcHelper(const S21Matrix& t_matrix) {
     }
 
     S21Matrix helper(t_matrix.m_rows, t_matrix.m_cols);
-
     S21Matrix::Cycle(m_i, m_j, (*this), [&]() {
         Cofactor(t_matrix, helper, m_i, m_j, t_matrix.m_rows);
         std::int32_t sign = ((m_i + m_j) % 2 == 0) ? 1 : -1;
@@ -288,16 +292,16 @@ bool S21Matrix::IsEmpty() const noexcept { return !m_matrix || !(m_rows > 0 && m
 
 template <typename T>
 constexpr void
-S21Matrix::Initialize(T&& t_matrix) noexcept(std::is_rvalue_reference_v<decltype(t_matrix)>) {
-    if constexpr (std::is_rvalue_reference_v<decltype(t_matrix)>) {
-        m_rows = std::exchange(t_matrix.m_rows, 0);
-        m_cols = std::exchange(t_matrix.m_cols, 0);
-        m_matrix = std::exchange(t_matrix.m_matrix, nullptr);
-    } else {
+S21Matrix::Initialize(T&& t_matrix) noexcept(!std::is_lvalue_reference_v<T>) {
+    if constexpr (std::is_lvalue_reference_v<T>) {
         m_rows = t_matrix.m_rows;
         m_cols = t_matrix.m_cols;
         m_matrix = new double[m_cols * m_rows]();
         std::copy_n(t_matrix.m_matrix, Size(), m_matrix);
+    } else {
+        m_rows = std::exchange(t_matrix.m_rows, 0);
+        m_cols = std::exchange(t_matrix.m_cols, 0);
+        m_matrix = std::exchange(t_matrix.m_matrix, nullptr);
     }
 }
 

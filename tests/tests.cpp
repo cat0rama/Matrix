@@ -1,5 +1,5 @@
-#include <iostream>
 #include <cstdio>
+#include <iostream>
 
 #include <gtest/gtest.h>
 
@@ -372,41 +372,41 @@ TEST(functionalFuncTest, inverseMatrix) {
 }
 
 TEST(functionalFuncTest, transpose) {
-    S21Matrix result{2, 2};
+  S21Matrix result{2, 2};
 
-    result(0, 0) = 1;
-    result(0, 1) = 2;
-    result(1, 0) = 4;
-    result(1, 1) = 3;
-    result = result.Transpose();
+  result(0, 0) = 1;
+  result(0, 1) = 2;
+  result(1, 0) = 4;
+  result(1, 1) = 3;
+  result = result.Transpose();
 
-    EXPECT_EQ(result(0, 0), 1);
-    EXPECT_EQ(result(0, 1), 4);
-    EXPECT_EQ(result(1, 0), 2);
-    EXPECT_EQ(result(1, 1), 3);
+  EXPECT_EQ(result(0, 0), 1);
+  EXPECT_EQ(result(0, 1), 4);
+  EXPECT_EQ(result(1, 0), 2);
+  EXPECT_EQ(result(1, 1), 3);
 }
 
 TEST(functionalFuncTest, calcComplements) {
-    S21Matrix result{2, 2};
-    S21Matrix another{2, 2};
+  S21Matrix result{2, 2};
+  S21Matrix another{2, 2};
 
-    result(0, 0) = 1;
-    result(0, 1) = 2;
-    result(1, 0) = 4;
-    result(1, 1) = 3;
+  result(0, 0) = 1;
+  result(0, 1) = 2;
+  result(1, 0) = 4;
+  result(1, 1) = 3;
 
-    another(0, 0) = 1;
-    another(0, 1) = 2;
-    another(1, 0) = 13;
-    another(1, 1) = 7;
+  another(0, 0) = 1;
+  another(0, 1) = 2;
+  another(1, 0) = 13;
+  another(1, 1) = 7;
 
-    result -= another * result;
-    result = result.CalcComplements();
+  result -= another * result;
+  result = result.CalcComplements();
 
-    EXPECT_EQ(result(0, 0), -44);
-    EXPECT_EQ(result(0, 1), 37);
-    EXPECT_EQ(result(1, 0), 6);
-    EXPECT_EQ(result(1, 1), -8);
+  EXPECT_EQ(result(0, 0), -44);
+  EXPECT_EQ(result(0, 1), 37);
+  EXPECT_EQ(result(1, 0), 6);
+  EXPECT_EQ(result(1, 1), -8);
 }
 
 TEST(functionalFuncTest, inverseMatrixEx) {
@@ -451,7 +451,6 @@ TEST(functionalFuncTest, braketEx) {
   S21Matrix m(1, 1);
   EXPECT_ANY_THROW(m(5, 0) = 5);
 }
-
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
