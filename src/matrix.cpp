@@ -141,13 +141,6 @@ double& S21Matrix::operator()(std::int32_t t_i, std::int32_t t_j) {
     }
     return m_matrix[t_i * m_cols + t_j];
 }
-
-const double& S21Matrix::operator()(std::int32_t t_i, std::int32_t t_j) const {
-    if (t_i >= m_rows || t_j >= m_cols) {
-        throw std::out_of_range("incorrect index. out of range\n");
-    }
-    return m_matrix[t_i * m_cols + t_j];
-}
     
 bool S21Matrix::EqMatrix(const S21Matrix& t_matrix) const { 
     // должно быть наоборот
