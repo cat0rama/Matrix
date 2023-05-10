@@ -142,6 +142,13 @@ double& S21Matrix::operator()(std::int32_t t_i, std::int32_t t_j) {
     return m_matrix[t_i * m_cols + t_j];
 }
 
+const double& S21Matrix::operator()(std::int32_t t_i, std::int32_t t_j) const {
+    if (t_i >= m_rows || t_j >= m_cols) {
+        throw std::out_of_range("incorrect index. out of range\n");
+    }
+    return m_matrix[t_i * m_cols + t_j];
+}
+    
 bool S21Matrix::EqMatrix(const S21Matrix& t_matrix) const { 
     // должно быть наоборот
      return *this == t_matrix; 
@@ -186,13 +193,13 @@ void S21Matrix::SetCols(std::int32_t t_cols) {
 
     *this = std::move(tmp);
     m_cols = t_cols;
-}
+} 
 
-std::int32_t S21Matrix::GetRows() const noexcept { return m_rows; }
+[[nodiscard]] std::int32_t S21Matrix::GetRows() const noexcept { return m_rows; }
 
-std::int32_t S21Matrix::GetCols() const noexcept { return m_cols; }
+[[nodiscard]] std::int32_t S21Matrix::GetCols() const noexcept { return m_cols; }
 
-S21Matrix S21Matrix::InverseMatrix() {
+[[nodiscard]] S21Matrix S21Matrix::InverseMatrix() {
     if (m_rows != m_cols) {
         std::logic_error("matrix are not square\n");
     }
@@ -206,14 +213,14 @@ S21Matrix S21Matrix::InverseMatrix() {
     return CalcComplements().Transpose() * (1.0 / determinant);
 }
 
-S21Matrix S21Matrix::Transpose() {
+[[nodiscard]] S21Matrix S21Matrix::Transpose() {
     S21Matrix tmp(m_rows, m_cols);
     S21Matrix::Cycle(m_i, m_j, tmp, [&]() { tmp(m_j, m_i) = (*this)(m_i, m_j); });
 
     return tmp;
 }
 
-double S21Matrix::Determinant() {
+[[nodiscard]] double S21Matrix::Determinant() {
     if (m_rows != m_cols || IsEmpty()) {
         throw std::logic_error("matrix are not square\n");
     }
@@ -244,7 +251,7 @@ void S21Matrix::Cofactor(const S21Matrix& t_src, S21Matrix& t_dst, std::int32_t 
     }
 }
 
-double S21Matrix::DeterminantHelper(const S21Matrix& t_matrix, std::int32_t t_size) {
+[[nodiscard]] double S21Matrix::DeterminantHelper(const S21Matrix& t_matrix, std::int32_t t_size) {
     if (t_size == 1) {
         return t_matrix(0, 0);
     }
@@ -262,7 +269,7 @@ double S21Matrix::DeterminantHelper(const S21Matrix& t_matrix, std::int32_t t_si
     return result;
 }
 
-S21Matrix S21Matrix::CalcHelper(const S21Matrix& t_matrix) {
+[[nodiscard]] S21Matrix S21Matrix::CalcHelper(const S21Matrix& t_matrix) {
     S21Matrix tmp(t_matrix.m_rows, t_matrix.m_cols);
 
     if (t_matrix.m_rows == 1) {
@@ -288,7 +295,7 @@ S21Matrix S21Matrix::CalcComplements() {
     return CalcHelper(*this);
 }
 
-bool S21Matrix::IsEmpty() const noexcept { return !m_matrix || !(m_rows > 0 && m_cols > 0); }
+[[nodiscard]] bool S21Matrix::IsEmpty() const noexcept { return !m_matrix || !(m_rows > 0 && m_cols > 0); }
 
 template <typename T>
 constexpr void
@@ -315,5 +322,5 @@ constexpr void S21Matrix::Cycle(std::int32_t& t_i, std::int32_t& t_j, T&& t_matr
     t_i = 0, t_j = 0;
 }
 
-std::int32_t S21Matrix::Size() const noexcept { return m_rows * m_cols; }
+[[nodiscard]] std::int32_t S21Matrix::Size() const noexcept { return m_rows * m_cols; }
 } // namespace s21
